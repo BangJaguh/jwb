@@ -90,10 +90,8 @@ sed -i 's/AcceptEnv/#AcceptEnv/g' /etc/ssh/sshd_config
 service sshd restart
 
 # set repo
-wget -O /etc/apt/sources.list "https://raw.githubusercontent.com/jfarcy28/debianpostinstall/master/sources.list"
-wget "http://www.dotdeb.org/dotdeb.gpg"
-cat dotdeb.gpg | apt-key add -;rm dotdeb.gpg
-sh -c 'echo "deb http://download.webmin.com/download/repository sarge contrib" > /etc/apt/sources.list.d/webmin.list'
+
+sh -c 'echo "deb http://download.webmin.com/download/repository sarge c /etc/apt/sources.list.d/webmin.list'
 wget -qO - http://www.webmin.com/jcameron-key.asc | apt-key add -
 
 # update
