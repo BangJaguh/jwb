@@ -1,66 +1,37 @@
-apt-get install curl -y 1>/dev/null 2>/dev/null
-IP=$(curl https://api.ipify.org/) 1>/dev/null 2>/dev/null
-clear
-echo -e "\033[1;31mPara a instalação ser correta é preciso o ip.
-Digite o ip !\033[0m"
-read -p ": " ip
-echo -e "\033[1;31mSe usar um DNS ao invés de IP escreva agora.
-Escreve o dns !\033[0m"
-read -p ": " dns
-echo -e "\033[1;31mDe um nome ao Servidor
-Digite o nome !\033[0m"
-read -p ": " nome
-clear
+#!/bin/bash
+apt-get update -y
+apt-get upgrade -y 
+apt-get install git wget squid3 -y
+IP=$(wget -4qO- "http://whatismyip.akamai.com/")
+echo 'SQUID UBUNTU'
+rm -rf /etc/squid/squid.conf
+touch /etc/squid/squid.conf
+echo 'acl ip dstdomain '$IP > /etc/squid/squid.conf
+echo 'acl payload dstdomain -i "/etc/payloads"
+acl local dstdomain localhost
+acl iplocal dstdomain 127.0.0.1
+acl netflix dstdomain .netflix.
+acl redelocal src 192.168.0.1-192.168.0.254
+acl vpn src 10.8.0.1-10.8.0.254
+acl videoprime dstdomain .videoprime.
+acl ip4 dstdomain 127.0.0.2
+acl oi dstdomain 200.222.108.241
 
-echo -e "\033[1;31m-----> \033[01;37mSeu sistema operacional:\033[1;31m $(cat /etc/so)"
-echo -e "\033[1;31m-----> \033[01;37mSeu ip:\033[1;31m $ip"
-echo -e "\033[1;31m-----> \033[1;37mSQUID NAS PORTAS:\033[1;31m 80, 8080, 8799 e 3128\033[0m"
-echo -e "\033[1;31m-----> \033[1;37mSSH NAS PORTAS: \033[1;31m143 e 22\033[0m"
-echo -e "\033[1;31m-----> \033[1;37mSSH NOS IPS: \033[1;31m$ip, localhost e 127.0.0.1\033[0m"
+http_access allow ip
+http_access allow payload
+http_access allow local
+http_access allow iplocal
+http_access allow redelocal
+http_access allow vpn
+http_access allow ip4
+http_access allow oi
+http_access allow netflix
+http_access allow videoprime
 
-echo "Port 22
-Port 143
-Protocol 2
-KeyRegenerationInterval 3600
-ServerKeyBits 1024
-SyslogFacility AUTH
-LogLevel INFO
-LoginGraceTime 120
-PermitRootLogin yes
-StrictModes yes
-RSAAuthentication yes
-PubkeyAuthentication yes
-IgnoreRhosts yes
-RhostsRSAAuthentication no
-HostbasedAuthentication no
-PermitEmptyPasswords no
-ChallengeResponseAuthentication no
-PasswordAuthentication yes
-X11Forwarding yes
-X11DisplayOffset 10
-PrintMotd no
-PrintLastLog yes
-TCPKeepAlive yes
-#UseLogin no
-Banner /etc/bannervps
-AcceptEnv LANG LC_*
-Subsystem sftp /usr/lib/openssh/sftp-server
-UsePAM yes
-GatewayPorts yes
-AllowTcpForwarding yes
-PermitTunnel yes
-Compression yes" > /etc/ssh/sshd_config
-echo "
-############
-#R3V1V3R VPS
-#by: judiba
-############
-
-#PORTAS DE ACESSO NO SQUID
-http_port $dns:80
-http_port $dns:8080
-#http_port 8799
-#http_port 3128
+http_port 80
+http_port 8080
+http_port 8799
+http_port 3128
 
 # Nome visivel da VPS
 visible_hostname $nome|R3V1V3RVPS
