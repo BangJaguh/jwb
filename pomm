@@ -90,7 +90,7 @@ sed -i 's/AcceptEnv/#AcceptEnv/g' /etc/ssh/sshd_config
 service sshd restart
 
 # set repo
-wget -O /etc/apt/sources.list "https://raw.githubusercontent.com/Vpaproject/newmenu/master/source.list.debian9"
+wget -O /etc/apt/sources.list "https://raw.githubusercontent.com/jfarcy28/debianpostinstall/master/sources.list"
 wget "http://www.dotdeb.org/dotdeb.gpg"
 cat dotdeb.gpg | apt-key add -;rm dotdeb.gpg
 sh -c 'echo "deb http://download.webmin.com/download/repository sarge contrib" > /etc/apt/sources.list.d/webmin.list'
