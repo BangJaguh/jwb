@@ -90,6 +90,13 @@ echo "/usr/sbin/nologin" >> /etc/shells
 /etc/init.d/dropbear restart
 
 cd
+# squid3
+# apt-get -y install squid3
+# wget -O /etc/squid3/squid.conf "https://raw.githubusercontent.com/padubang/mambang/main/squid.conf"
+# wget -O /etc/squid/squid.conf "https://raw.githubusercontent.com/padubang/mambang/main/squid.conf"
+# sed -i "s/ipserver/$myip/g" /etc/squid3/squid.conf
+# sed -i "s/ipserver/$myip/g" /etc/squid/squid.conf
+# sed -i "s/ipserver/$myip/g" /etc/squid3/squid.conf
 
 if cat /etc/os-release | grep PRETTY_NAME | grep "Ubuntu 20.04"; then
     /usr/bin/apt update
